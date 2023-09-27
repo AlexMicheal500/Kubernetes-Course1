@@ -1,0 +1,83 @@
+# To start cluster minikube
+minikube start
+
+# To check status use:
+minikube status
+
+# Note that there is docker running inside the node in your cluster
+# To ssh first check the ip assigned to node using
+minikube ip
+minikube ssh
+# To prove that docker runs as defult in kubernetes cluster, run the following:
+docker ps # This shows all the running containers 
+
+# To exit ssh use:
+exit
+
+# To check cluster info, we use:
+kubectl cluster-info
+
+# To list nodes in our kubernetes cluster we use:
+kubectl get nodes
+
+# To list pods in a cluster:
+kubectl get pods
+
+# To list the available namespaces in the pod, we use:
+kubectl get namespaces # Names[aces are used to group different resources and configuration objects
+
+#To list pods in a particular namespace we use:
+ kubectl get pods --namespace=kube-system
+
+# To create pods manually
+kubectl run nginx --image=nginx 
+
+# To describe a specific pod:
+kubectl describe pod nginx
+
+# In order to connect to podss we must have a service
+# All containers in a pod share thesame namespace
+
+# To connect to container use:
+docker exec -it e390a73c4ef8 sh
+# Then to check the name of the hostname we use:
+hostname
+# To check for teh ip of the container we use :
+hostname -i
+# To check if the nginx server is up and running we use:
+curl <ip>
+
+# To see the list of pods with their ip addresses included we use:
+kubectl get pods -o wide
+
+# Deployment is used for distributing pods across multiple clusters
+kubectl create deployment <name_of_deployment> --image=nginx
+# Pods are automatically created after creating a deployment. To check use:
+kubectl get pod
+
+# To check the details of the deployment, we use:
+kubectl describe deployment <name_of deployment>
+
+# NOTE: Selector is used to connect pods with deployment. Because in kubernetes, pods are different from deployments
+
+# To scale deployent we use:s
+kubectl scale deployment nginx-deployment --replicas=5 
+
+# It is not convenient to use the ip from the pods above. It is better to use an ip address provided by kubernetes to have access to any of the pods
+#You use Services to connect to specific deployment using specific ip.
+#There are different options available 1) Using a cluster ip 2) Using external / load-balancer ip addresses. But it is assigned by a cloud service provider.
+# Let us create a cluster ip
+kubectl get deployments
+# We can expose specific ports from the deployment. Note that the internal port for nginx is port 80, so we aare to expose it to an external port of 8080
+kubectl expose deployment nginx-deployment --port=8080 --target-port=80
+#You will observer we will have two services. The default service and nginx-deployment service
+kubectl get services 
+# Note that clusterIP is only available within the cluster
+# CLUSTER IP is just a single ip which was created as a service for a deployment. You use the single IP to connect to any of the pods as this means it serves a load balancer to different pods
+
+# To see details of a particular service, we use the following:
+kubectl get services
+kubectl describe services nginx-deployment
+
+# PROJECT: Create a basic node.js applictation where we will utilize an express webserver package and create our custome webserver
+
